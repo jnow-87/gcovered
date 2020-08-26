@@ -13,17 +13,14 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <opt.h>
 #include <file.h>
 
 
-#include <errno.h>
-#include <string.h>
-
-
 /* local/static prototypes */
-static char const *prefix_dir(char const *s0, char const *s1);
+static char const *prefix_dir(char const *dir, char const *file);
 
 
 /* global functions */
@@ -46,12 +43,7 @@ file_type_t file_type(char const *file){
 
 	/* check file type and extension */
 	if(stat.st_mode & (S_IFREG | S_IFLNK)){
-		for(s=file+strlen(file); s!=file; s--){
-			if(*s == '.'){
-				if(strcmp(s, ".gcov") == 0)
-					return F_GCOV;
-			}
-		}
+		return F_FILE;
 	}
 	else if(stat.st_mode & S_IFDIR)
 		return F_DIR;
@@ -66,12 +58,39 @@ err_0:
 	return F_ERROR;
 }
 
-int dir_process(char const *root, int (*op)(char const *file)){
+char const *file_ext(char const *file){
+	char const *s;
+
+
+	for(s=file+strlen(file); s!=file; s--){
+		if(*s == '.')
+			return s + 1;
+	}
+
+	return 0x0;
+}
+
+int dir_apply(char const *root, char const **exts, int (*op)(char const *file, va_list args), ...){
+	int r;
+	va_list lst;
+
+
+	va_start(lst, op);
+	r = dir_vapply(root, exts, op, lst);
+	va_end(lst);
+
+	return r;
+}
+
+int dir_vapply(char const *root, char const **exts, int (*op)(char const *file, va_list args), va_list op_args){
 	int fd;
+	int i;
 	int r;
 	DIR *dp;
 	struct dirent *e;
 	char const *e_name;
+	char const *e_ext;
+	va_list args;
 
 
 	r = -1;
@@ -96,11 +115,22 @@ int dir_process(char const *root, int (*op)(char const *file)){
 			if(!opts.recursive || strcmp(e->d_name, ".") == 0 || strcmp(e->d_name, "..") == 0)
 				break;
 
-			r = dir_process(e_name, op);
+			va_copy(args, op_args);
+			r = dir_vapply(e_name, exts, op, args);
+			va_end(args);
 			break;
 
-		case F_GCOV:
-			r = op(e_name);
+		case F_FILE:
+			e_ext = file_ext(e->d_name);
+
+			for(i=0; e_ext!=0x0 && exts[i]!=0x0; i++){
+				if(strcmp(e_ext, exts[i]) == 0){
+					va_copy(args, op_args);
+					r = op(e_name, args);
+					va_end(args);
+					break;
+				}
+			}
 			break;
 
 		default:
@@ -111,14 +141,10 @@ int dir_process(char const *root, int (*op)(char const *file)){
 		free((void*)e_name);
 	}
 
-
 end_1:
 	(void)closedir(dp);
 
 end_0:
-	if(r != 0)
-		printf("err: %s: %s\n", root, strerror(errno));
-
 	return r;
 }
 
@@ -126,12 +152,14 @@ end_0:
 /* local functions */
 static char const *prefix_dir(char const *dir, char const *file){
 	char *s;
+	size_t dlen;
 
 
-	s = malloc(strlen(dir) + strlen(file) + 1);
+	dlen = strlen(dir);
+	s = malloc(dlen + strlen(file) + 2);
 
 	if(s != 0x0)
-		sprintf(s, "%s/%s", dir, file);
+		sprintf(s, "%s%s%s", dir, (dir[dlen - 1] == '/' ? "" : "/"), file);
 
 	return s;
 }

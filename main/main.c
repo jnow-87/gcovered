@@ -7,23 +7,17 @@
 
 
 
-#include <stdio.h>
-#include <covdata.h>
-#include <statistics.h>
 #include <opt.h>
-#include <file.h>
+#include <covdata.h>
 #include <gcov.h>
-
-
-/* static variables */
-file_data_t total;
+#include <statistics.h>
 
 
 /* global functions */
 int main(int argc, char **argv){
-	int i;
 	int r;
 	int optind;
+	file_cov_t *cov;
 
 
 	/* command line processing */
@@ -32,33 +26,23 @@ int main(int argc, char **argv){
 	if(optind < 0)				return -1;
 	else if(argc - optind == 0)	return 0;
 
-	/* init */
-	cov_file_init(&total);
-	total.name = "total";
+	/* parse gcov files */
+	cov = gcov_parse((char const**)(argv + optind), argc - optind);
 
-	/* print header */
-	stat_header();
+	if(cov == 0x0)
+		return -1;
 
-	/* process input */
-	for(i=optind, r=0; r==0 && i<argc; i++){
-		switch(file_type(argv[i])){
-		case F_DIR:
-			r = dir_process(argv[i], gcov_process);
-			break;
+	r = stats_check_thresholds(cov) ? 0 : -1;
 
-		case F_GCOV:
-			r = gcov_process(argv[i]);
-			break;
+	/* print coverage statistics */
+	stats_print(cov);
 
-		default:
-			printf("unsupported file %s\n", argv[i]);
-			return -1;
-		}
-	}
+	/* check for uncovered files */
+	if(opts.list_uncovered)
+		stats_uncovered((char const**)(argv + optind), argc - optind, cov);
 
-	/* print total */
-	printf("\n");
-	stat_line(&total);
+	/* cleanup */
+	gcov_cleanup(cov);
 
-	return stat_check_thresholds(&total);
+	return r;
 }

@@ -18,7 +18,7 @@
 
 /* macros */
 #define STRINGIFY(v)		#v
-#define STRINGIFY_VAL(v)	STRINGIFY(v)
+#define DEFAULT(v)	"(default: " STRINGIFY(v) ")"
 
 
 /* local/static prototypes */
@@ -30,7 +30,8 @@ opt_t opts = {
 	.thr_func = DEFAULT_THR_FUNCTION,
 	.thr_lines = DEFAULT_THR_LINES,
 	.thr_branches = DEFAULT_THR_BRANCHES,
-	.recursive = true,
+	.recursive = DEFAULT_RECURSIVE,
+	.list_uncovered = DEFAULT_LIST_UNCOVERED,
 };
 
 
@@ -43,18 +44,20 @@ int opt_parse(int argc, char **argv){
 		{ .name = "thr-lines",		.has_arg = required_argument,	.flag = 0,	.val = 'l' },
 		{ .name = "thr-branches",	.has_arg = required_argument,	.flag = 0,	.val = 'b' },
 		{ .name = "no-recursion",	.has_arg = no_argument,			.flag = 0,	.val = 'n' },
+		{ .name = "uncovered",		.has_arg = no_argument,			.flag = 0,	.val = 'u' },
 		{ .name = "help",			.has_arg = no_argument,			.flag = 0,	.val = 'h' },
 		{ 0, 0, 0, 0}
 	};
 
 
 	/* parse arguments */
-	while((opt = getopt_long(argc, argv, ":f:l:b:nh", long_opt, &long_optind)) != -1){
+	while((opt = getopt_long(argc, argv, ":f:l:b:nuh", long_opt, &long_optind)) != -1){
 		switch(opt){
 		case 'f':	opts.thr_func = atof(optarg); break;
 		case 'l':	opts.thr_lines = atof(optarg); break;
 		case 'b':	opts.thr_branches = atof(optarg); break;
 		case 'n':	opts.recursive = false; break;
+		case 'u':	opts.list_uncovered = true; break;
 		case 'h':	(void)help(argv[0], 0x0); return argc;
 
 		case ':':	return help(argv[0], "missing argument to \"%s\"", argv[optind - 1]);
@@ -94,14 +97,16 @@ static int help(char const * prog_name, char const *err, ...){
 		"%30.30s    %s\n"
 		"\n"
 		"%30.30s    %s\n"
+		"%30.30s    %s\n"
 		"\n"
 		"%30.30s    %s\n"
 		,
 		prog_name,
-		"-f, --func-thr=<thr [%]>",	"function coverage threshold (default: " STRINGIFY_VAL(DEFAULT_THR_FUNCTION) "%)",
-		"-l, --line-thr=<thr [%]>",	"line coverage threshold (default: " STRINGIFY_VAL(DEFAULT_THR_LINES) "%)",
-		"-b, --branch-thr=<thr [%]>", "branch coverage threshold (default: " STRINGIFY_VAL(DEFAULT_THR_BRANCHES) "%)",
-		"-n, --no-recursion", "do not recurse into sub-directories (default: false)",
+		"-f, --func-thr=<thr [%]>",	"function coverage threshold " DEFAULT(DEFAULT_THR_FUNCTION),
+		"-l, --line-thr=<thr [%]>",	"line coverage threshold " DEFAULT(DEFAULT_THR_LINES),
+		"-b, --branch-thr=<thr [%]>", "branch coverage threshold " DEFAULT(DEFAULT_THR_BRANCHES),
+		"-n, --no-recursion", "do not recurse into sub-directories " DEFAULT(DEFAULT_RECURSIVE),
+		"-u, --uncovered", "list source files (.c, .cc) without coverage data " DEFAULT(DEFAULT_LIST_UNCOVERED),
 		"-h, --help", "print this help message"
 	);
 

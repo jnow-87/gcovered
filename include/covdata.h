@@ -17,20 +17,22 @@ typedef struct{
 				 covered;
 } cov_data_t;
 
-typedef struct{
+typedef struct file_cov_t{
 	char const *name;
 	cov_data_t functions,
 			   lines,
 			   branches;
-} file_data_t;
+
+	struct file_cov_t *prev,
+					  *next;
+} file_cov_t;
 
 
 /* prototypes */
-void cov_file_init(file_data_t *data);
-void cov_data_init(cov_data_t *data);
+void cov_init(file_cov_t *data);
 
-void cov_data_update(cov_data_t *data, int cnt);
-void cov_data_add(cov_data_t *lhs, cov_data_t *rhs);
+void cov_update(cov_data_t *data, int cnt);
+void cov_add(cov_data_t *lhs, cov_data_t *rhs);
 
 
 #endif // COVDATA_H

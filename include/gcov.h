@@ -11,8 +11,13 @@
 #define GCOV_H
 
 
+#include <sys/types.h>
+#include <covdata.h>
+
+
 /* prototypes */
-int gcov_process(char const *file);
+file_cov_t *gcov_parse(char const **files, size_t n);
+void gcov_cleanup(file_cov_t *cov);
 
 
 #endif // GCOV_H

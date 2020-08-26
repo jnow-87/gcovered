@@ -12,6 +12,7 @@
 
 /* header */
 %{
+	#include <sys/types.h>
 	#include <gcov/lexer.lex.h>
 	#include <string.h>
 	#include <errno.h>
@@ -29,18 +30,18 @@
 
 	/* prototypes */
 	static void cleanup(void);
-	static int gcoverror(char const *file, file_data_t *covdata, char const *s);
+	static int gcoverror(char const *file, file_cov_t *cov, char const *s);
 	static char *stralloc(char *s, size_t len);
 %}
 
 /* parse paramters */
 %parse-param { char const *file }
-%parse-param { file_data_t *covdata }
+%parse-param { file_cov_t *cov }
 
 /* init code */
 %initial-action{
 	/* reset coverage data */
-	cov_file_init(covdata);
+	cov_init(cov);
 
 	/* open config file */
 	fp = fopen(file, "r");
@@ -94,10 +95,10 @@ start :	%empty					{ $$.line = 0; }
 	  | start line				{ $$ = $1; }
 	  ;
 
-line :	FUNC_COV				{ $$ = $1; cov_data_update(&covdata->functions, $1.cnt); }
-	 |	LINE_COV				{ $$ = $1; cov_data_update(&covdata->lines, $1.cnt); }
-	 |	BRANCH_COV				{ $$ = $1; cov_data_update(&covdata->branches, $1.cnt); }
-	 |	FILE_NAME				{ covdata->name = stralloc($1.s, $1.len); }
+line :	FUNC_COV				{ $$ = $1; cov_update(&cov->functions, $1.cnt); }
+	 |	LINE_COV				{ $$ = $1; cov_update(&cov->lines, $1.cnt); }
+	 |	BRANCH_COV				{ $$ = $1; cov_update(&cov->branches, $1.cnt); }
+	 |	FILE_NAME				{ cov->name = stralloc($1.s, $1.len); }
 	 ;
 
 
