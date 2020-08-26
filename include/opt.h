@@ -22,6 +22,7 @@
 
 /* types */
 typedef struct{
+	bool recursive;
 } opt_t;
 
 

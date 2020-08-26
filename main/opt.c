@@ -27,6 +27,7 @@ static int help(char const *prog_name, char const *err, ...);
 
 /* global variables */
 opt_t opts = {
+	.recursive = true,
 };
 
 
@@ -35,14 +36,16 @@ int opt_parse(int argc, char **argv){
 	int opt;
 	int long_optind;
 	struct option const long_opt[] = {
+		{ .name = "no-recursion",	.has_arg = no_argument,			.flag = 0,	.val = 'n' },
 		{ .name = "help",			.has_arg = no_argument,			.flag = 0,	.val = 'h' },
 		{ 0, 0, 0, 0}
 	};
 
 
 	/* parse arguments */
-	while((opt = getopt_long(argc, argv, ":h", long_opt, &long_optind)) != -1){
+	while((opt = getopt_long(argc, argv, ":nh", long_opt, &long_optind)) != -1){
 		switch(opt){
+		case 'n':	opts.recursive = false; break;
 		case 'h':	(void)help(argv[0], 0x0); return argc;
 
 		case ':':	return help(argv[0], "missing argument to \"%s\"", argv[optind - 1]);
@@ -78,8 +81,11 @@ static int help(char const * prog_name, char const *err, ...){
 		"\n"
 		"Options:\n"
 		"%30.30s    %s\n"
+		"\n"
+		"%30.30s    %s\n"
 		,
 		prog_name,
+		"-n, --no-recursion", "do not recurse into sub-directories (default: false)",
 		"-h, --help", "print this help message"
 	);
 

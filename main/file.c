@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <opt.h>
 #include <file.h>
 
 
@@ -92,7 +93,7 @@ int dir_process(char const *root, int (*op)(char const *file)){
 
 		switch(file_type(e_name)){
 		case F_DIR:
-			if(strcmp(e->d_name, ".") == 0 || strcmp(e->d_name, "..") == 0)
+			if(!opts.recursive || strcmp(e->d_name, ".") == 0 || strcmp(e->d_name, "..") == 0)
 				break;
 
 			r = dir_process(e_name, op);
