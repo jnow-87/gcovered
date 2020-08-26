@@ -45,18 +45,14 @@ void stats_print(file_cov_t *cov){
 	cov_line(&total, FG_VIOLETT);
 }
 
-void stats_uncovered(char const **files, size_t n, file_cov_t *cov){
-	size_t i;
+void stats_uncovered(file_cov_t *cov){
+	char const **e;
 
 
 	uncovered_header();
 
-	for(i=0; i<n; i++){
-		if(file_type(files[i]) != F_DIR)
-			continue;
-
-		(void)dir_apply(files[i], (char const*[]){"c", "cc", 0x0}, uncovered, files[i], cov);
-	}
+	for(e=opts.src_dirs; *e!=0x0; e++)
+		(void)dir_apply(*e, (char const*[]){"c", "cc", 0x0}, uncovered, *e, cov);
 }
 
 int stats_thresholds_verify(void){
@@ -161,6 +157,7 @@ static double cov_per(cov_data_t *data){
 static int uncovered(char const *_file, va_list args){
 	char const *dir,
 			   *file;
+	char const **excl;
 	file_cov_t *cov,
 				*c;
 
@@ -169,6 +166,17 @@ static int uncovered(char const *_file, va_list args){
 	cov = va_arg(args, file_cov_t*);
 
 	file = _file + strlen(dir);
+
+	if(*file == '/')
+		file++;
+
+	for(excl=opts.excl_dirs; *excl!=0x0; excl++){
+		if(strncmp(_file, *excl, strlen(*excl)) == 0
+		|| strncmp(_file + 2, *excl, strlen(*excl)) == 0
+		){
+			return 0;
+		}
+	}
 
 	list_for_each(cov, c){
 		if(strcmp(c->name, file) == 0)

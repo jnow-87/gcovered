@@ -39,10 +39,11 @@ int main(int argc, char **argv){
 
 	/* check for uncovered files */
 	if(opts.list_uncovered)
-		stats_uncovered((char const**)(argv + optind), argc - optind, cov);
+		stats_uncovered(cov);
 
 	/* cleanup */
 	gcov_cleanup(cov);
+	opts_cleanup();
 
 	return r;
 }

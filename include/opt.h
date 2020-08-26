@@ -17,9 +17,12 @@
 /* macros */
 #define DEFAULT_THR_RED			100.0
 #define DEFAULT_THR_YELLOW		100.0
+#define DEFAULT_SRC_DIR			"./"
 #define DEFAULT_RECURSIVE		true
 #define DEFAULT_LIST_UNCOVERED	false
 #define DEFAULT_NOCOLOUR		false
+
+#define SRC_DIR_SEPARATOR		':'
 
 
 /* types */
@@ -33,6 +36,9 @@ typedef struct{
 				thr_lines,
 				thr_branches;
 
+	char const **src_dirs,
+			   **excl_dirs;
+
 	bool recursive,
 		 list_uncovered,
 		 colour;
@@ -41,6 +47,7 @@ typedef struct{
 
 /* prototypes */
 int opt_parse(int argc, char **argv);
+void opts_cleanup(void);
 
 
 /* external variables */
