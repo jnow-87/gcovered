@@ -60,5 +60,5 @@ int main(int argc, char **argv){
 	printf("\n");
 	stat_line(&total);
 
-	return 0;
+	return stat_check_thresholds(&total);
 }

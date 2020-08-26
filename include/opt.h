@@ -22,6 +22,10 @@
 
 /* types */
 typedef struct{
+	double thr_func,
+		   thr_lines,
+		   thr_branches;
+
 	bool recursive;
 } opt_t;
 

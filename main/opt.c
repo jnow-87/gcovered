@@ -27,6 +27,9 @@ static int help(char const *prog_name, char const *err, ...);
 
 /* global variables */
 opt_t opts = {
+	.thr_func = DEFAULT_THR_FUNCTION,
+	.thr_lines = DEFAULT_THR_LINES,
+	.thr_branches = DEFAULT_THR_BRANCHES,
 	.recursive = true,
 };
 
@@ -36,6 +39,9 @@ int opt_parse(int argc, char **argv){
 	int opt;
 	int long_optind;
 	struct option const long_opt[] = {
+		{ .name = "thr-func",		.has_arg = required_argument,	.flag = 0,	.val = 'f' },
+		{ .name = "thr-lines",		.has_arg = required_argument,	.flag = 0,	.val = 'l' },
+		{ .name = "thr-branches",	.has_arg = required_argument,	.flag = 0,	.val = 'b' },
 		{ .name = "no-recursion",	.has_arg = no_argument,			.flag = 0,	.val = 'n' },
 		{ .name = "help",			.has_arg = no_argument,			.flag = 0,	.val = 'h' },
 		{ 0, 0, 0, 0}
@@ -43,8 +49,11 @@ int opt_parse(int argc, char **argv){
 
 
 	/* parse arguments */
-	while((opt = getopt_long(argc, argv, ":nh", long_opt, &long_optind)) != -1){
+	while((opt = getopt_long(argc, argv, ":f:l:b:nh", long_opt, &long_optind)) != -1){
 		switch(opt){
+		case 'f':	opts.thr_func = atof(optarg); break;
+		case 'l':	opts.thr_lines = atof(optarg); break;
+		case 'b':	opts.thr_branches = atof(optarg); break;
 		case 'n':	opts.recursive = false; break;
 		case 'h':	(void)help(argv[0], 0x0); return argc;
 
@@ -81,10 +90,17 @@ static int help(char const * prog_name, char const *err, ...){
 		"\n"
 		"Options:\n"
 		"%30.30s    %s\n"
+		"%30.30s    %s\n"
+		"%30.30s    %s\n"
+		"\n"
+		"%30.30s    %s\n"
 		"\n"
 		"%30.30s    %s\n"
 		,
 		prog_name,
+		"-f, --func-thr=<thr [%]>",	"function coverage threshold (default: " STRINGIFY_VAL(DEFAULT_THR_FUNCTION) "%)",
+		"-l, --line-thr=<thr [%]>",	"line coverage threshold (default: " STRINGIFY_VAL(DEFAULT_THR_LINES) "%)",
+		"-b, --branch-thr=<thr [%]>", "branch coverage threshold (default: " STRINGIFY_VAL(DEFAULT_THR_BRANCHES) "%)",
 		"-n, --no-recursion", "do not recurse into sub-directories (default: false)",
 		"-h, --help", "print this help message"
 	);

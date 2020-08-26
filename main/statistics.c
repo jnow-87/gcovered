@@ -8,11 +8,12 @@
 
 
 #include <stdio.h>
+#include <opt.h>
 #include <covdata.h>
 
 
 /* local/static prototypes */
-static float per(cov_data_t *data);
+static double per(cov_data_t *data);
 
 
 /* global functions */
@@ -44,9 +45,19 @@ void stat_line(file_data_t *covdata){
 	printf("\n");
 }
 
+int stat_check_thresholds(file_data_t *covdata){
+	if(per(&covdata->functions) < opts.thr_func
+	|| per(&covdata->lines) < opts.thr_lines
+	|| per(&covdata->branches) < opts.thr_branches
+	)
+		return -1;
+
+	return 0;
+}
+
 
 /* local functions */
-static float per(cov_data_t *data){
+static double per(cov_data_t *data){
 	if(data->total == 0.0)
 		return 0.0;
 	return ((float)data->covered * 100) / data->total;

@@ -15,5 +15,7 @@
 void stat_header(void);
 void stat_line(file_data_t *covdata);
 
+int stat_check_thresholds(file_data_t *covdata);
+
 
 #endif // STATISTICS_H
