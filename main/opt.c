@@ -15,6 +15,7 @@
 #include <escape.h>
 #include <opt.h>
 #include <file.h>
+#include <statistics.h>
 
 
 /* macros */
@@ -76,6 +77,10 @@ int opt_parse(int argc, char **argv){
 		default:	return help("unknown error");
 		}
 	}
+
+	/* opt checks */
+	if(stats_thresholds_verify() != 0)
+		return help("invalid coverage threshold configuration, valid range [0, 100]");
 
 	return optind;
 }

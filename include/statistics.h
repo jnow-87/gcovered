@@ -11,14 +11,16 @@
 #define STATISTICS_H
 
 
-#include <stdbool.h>
 #include <sys/types.h>
+#include <covdata.h>
 
 
 /* prototypes */
 void stats_print(file_cov_t *cov);
-void stats_uncovered(char const **files, size_t n, file_cov_t *cov);
-bool stats_check_thresholds(file_cov_t *cov);
+void stats_uncovered(file_cov_t *cov);
+
+int stats_thresholds_verify(void);
+int stats_thresholds_apply(file_cov_t *cov);
 
 
 #endif // STATISTICS_H

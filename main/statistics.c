@@ -59,14 +59,32 @@ void stats_uncovered(char const **files, size_t n, file_cov_t *cov){
 	}
 }
 
-bool stats_check_thresholds(file_cov_t *cov){
+int stats_thresholds_verify(void){
+	threshold_t **thr;
+	threshold_t *thrs[] = {
+		&opts.thr_func,
+		&opts.thr_lines,
+		&opts.thr_branches,
+		0x0,
+	};
+
+	for(thr=thrs; *thr!=0x0; thr++){
+		if((*thr)->red < 0.0 || (*thr)->red > 100.0
+		|| (*thr)->yellow < 0.0 || (*thr)->yellow > 100.0)
+			return -1;
+	}
+
+	return 0;
+}
+
+int stats_thresholds_apply(file_cov_t *cov){
 	if(cov_per(&cov->functions) < opts.thr_func.red
 	|| cov_per(&cov->lines) < opts.thr_lines.red
 	|| cov_per(&cov->branches) < opts.thr_branches.red
 	)
-		return false;
+		return -1;
 
-	return true;
+	return 0;
 }
 
 

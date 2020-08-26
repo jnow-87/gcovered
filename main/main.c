@@ -32,7 +32,7 @@ int main(int argc, char **argv){
 	if(cov == 0x0)
 		return -1;
 
-	r = stats_check_thresholds(cov) ? 0 : -1;
+	r = stats_thresholds_apply(cov);
 
 	/* print coverage statistics */
 	stats_print(cov);
