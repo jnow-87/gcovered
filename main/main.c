@@ -7,24 +7,15 @@
 
 
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <escape.h>
 #include <covdata.h>
+#include <statistics.h>
 #include <file.h>
-#include <gcov/parser.tab.h>
-
-
-/* local/static prototypes */
-static int gcov_process(char const *file);
-static void stat_header(void);
-static void stat_line(file_data_t *covdata);
-static float per(cov_data_t *data);
+#include <gcov.h>
 
 
 /* static variables */
-static file_data_t total;
+file_data_t total;
 
 
 /* global functions */
@@ -64,58 +55,4 @@ int main(int argc, char **argv){
 	stat_line(&total);
 
 	return 0;
-}
-
-
-/* local functions */
-static int gcov_process(char const *file){
-	file_data_t covdata;
-
-
-	if(gcovparse(file, &covdata) != 0)
-		return -1;
-
-	stat_line(&covdata);
-
-	cov_data_add(&total.functions, &covdata.functions);
-	cov_data_add(&total.lines, &covdata.lines);
-	cov_data_add(&total.branches, &covdata.branches);
-
-	free((void*)covdata.name);
-
-	return 0;
-}
-
-static void stat_header(void){
-	printf("%20.20s %25.25s %25.25s %25.25s\n", "file", "function", "line", "branch");
-}
-
-static void stat_line(file_data_t *covdata){
-	size_t i;
-	char line[26];
-	cov_data_t *data[] = {
-		&covdata->functions,
-		&covdata->lines,
-		&covdata->branches,
-	};
-
-
-	printf("%20.20s", covdata->name);
-
-	for(i=0; i<sizeof(data)/sizeof(data[0]); i++){
-		if(data[i]->total != 0)
-			snprintf(line, sizeof(line) - 1, "%u/%u (%.2f\%)", data[i]->covered, data[i]->total, per(data[i]));
-		else
-			snprintf(line, sizeof(line) - 1, "none");
-
-		printf(" %25.25s", line);
-	}
-
-	printf("\n");
-}
-
-static float per(cov_data_t *data){
-	if(data->total == 0.0)
-		return 0.0;
-	return ((float)data->covered * 100) / data->total;
 }

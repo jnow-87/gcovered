@@ -7,7 +7,7 @@
 
 
 
-obj-y := parser.tab.o lexer.lex.o
+obj-y := parser.tab.o lexer.lex.o process.o
 
 
 $(loc_build_tree)/lexer.lex.o: $(loc_build_tree)/parser.tab.c
