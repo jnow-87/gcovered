@@ -15,18 +15,22 @@
 
 
 /* macros */
-#define DEFAULT_THR_FUNCTION	100.0
-#define DEFAULT_THR_LINES		100.0
-#define DEFAULT_THR_BRANCHES	100.0
+#define DEFAULT_THR_RED			100.0
+#define DEFAULT_THR_YELLOW		100.0
 #define DEFAULT_RECURSIVE		true
 #define DEFAULT_LIST_UNCOVERED	false
 
 
 /* types */
 typedef struct{
-	double thr_func,
-		   thr_lines,
-		   thr_branches;
+	double red,
+		   yellow;
+} threshold_t;
+
+typedef struct{
+	threshold_t thr_func,
+				thr_lines,
+				thr_branches;
 
 	bool recursive,
 		 list_uncovered;

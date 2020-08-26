@@ -18,18 +18,21 @@
 
 /* macros */
 #define STRINGIFY(v)		#v
-#define DEFAULT(v)	"(default: " STRINGIFY(v) ")"
+#define DEFAULT(v)			"(default: " STRINGIFY(v) ")"
+#define DEFAULT2(v0, v1)	"(default: " STRINGIFY(v0) ", " STRINGIFY(v1) ")"
+#define DEFAULT_THR()		DEFAULT2(DEFAULT_THR_RED, DEFAULT_THR_YELLOW)
 
 
 /* local/static prototypes */
-static int help(char const *prog_name, char const *err, ...);
+static int help(char const *err, ...);
+static int parse_thr(char const *arg, threshold_t *thr);
 
 
 /* global variables */
 opt_t opts = {
-	.thr_func = DEFAULT_THR_FUNCTION,
-	.thr_lines = DEFAULT_THR_LINES,
-	.thr_branches = DEFAULT_THR_BRANCHES,
+	.thr_func = { .red = DEFAULT_THR_RED, .yellow = DEFAULT_THR_YELLOW },
+	.thr_lines = { .red = DEFAULT_THR_RED, .yellow = DEFAULT_THR_YELLOW },
+	.thr_branches = { .red = DEFAULT_THR_RED, .yellow = DEFAULT_THR_YELLOW },
 	.recursive = DEFAULT_RECURSIVE,
 	.list_uncovered = DEFAULT_LIST_UNCOVERED,
 };
@@ -53,16 +56,16 @@ int opt_parse(int argc, char **argv){
 	/* parse arguments */
 	while((opt = getopt_long(argc, argv, ":f:l:b:nuh", long_opt, &long_optind)) != -1){
 		switch(opt){
-		case 'f':	opts.thr_func = atof(optarg); break;
-		case 'l':	opts.thr_lines = atof(optarg); break;
-		case 'b':	opts.thr_branches = atof(optarg); break;
+		case 'f':	if(parse_thr(optarg, &opts.thr_func) != 0) return -1; break;
+		case 'l':	if(parse_thr(optarg, &opts.thr_lines) != 0) return -1; break;
+		case 'b':	if(parse_thr(optarg, &opts.thr_branches) != 0) return -1; break;
 		case 'n':	opts.recursive = false; break;
 		case 'u':	opts.list_uncovered = true; break;
-		case 'h':	(void)help(argv[0], 0x0); return argc;
+		case 'h':	(void)help(0x0); return argc;
 
-		case ':':	return help(argv[0], "missing argument to \"%s\"", argv[optind - 1]);
-		case '?':	return help(argv[0], "invalid option \"%s\"", argv[optind - 1]);
-		default:	return help(argv[0], "unknown error");
+		case ':':	return help("missing argument to \"%s\"", argv[optind - 1]);
+		case '?':	return help("invalid option \"%s\"", argv[optind - 1]);
+		default:	return help("unknown error");
 		}
 	}
 
@@ -71,7 +74,7 @@ int opt_parse(int argc, char **argv){
 
 
 /* local functions */
-static int help(char const * prog_name, char const *err, ...){
+static int help(char const *err, ...){
 	va_list lst;
 
 
@@ -86,29 +89,44 @@ static int help(char const * prog_name, char const *err, ...){
 	}
 
 	printf(
-		"usage: %s [options] {<gcov-file | directory>}\n"
+		"usage: gcovered [options] {<gcov-file | directory>}\n"
 		"\n"
 		"    Print function, line and branch coverage information for the given gcov-files\n"
 		"    and all gcov-files contained in the given directories.\n"
 		"\n"
 		"Options:\n"
-		"%30.30s    %s\n"
-		"%30.30s    %s\n"
-		"%30.30s    %s\n"
+		"%35.35s    %s\n"
+		"%35.35s    %s\n"
+		"%35.35s    %s\n"
 		"\n"
-		"%30.30s    %s\n"
-		"%30.30s    %s\n"
+		"%35.35s    %s\n"
+		"%35.35s    %s\n"
 		"\n"
-		"%30.30s    %s\n"
+		"%35.35s    %s\n"
 		,
-		prog_name,
-		"-f, --func-thr=<thr [%]>",	"function coverage threshold " DEFAULT(DEFAULT_THR_FUNCTION),
-		"-l, --line-thr=<thr [%]>",	"line coverage threshold " DEFAULT(DEFAULT_THR_LINES),
-		"-b, --branch-thr=<thr [%]>", "branch coverage threshold " DEFAULT(DEFAULT_THR_BRANCHES),
+		"-f, --func-thr=<red,yellow>", "function coverage thresholds [%] " DEFAULT_THR(),
+		"-l, --line-thr=<red,yellow>", "line coverage thresholds [%] " DEFAULT_THR(),
+		"-b, --branch-thr=<red,yellow>", "branch coverage thresholds [%] " DEFAULT_THR(),
 		"-n, --no-recursion", "do not recurse into sub-directories " DEFAULT(DEFAULT_RECURSIVE),
 		"-u, --uncovered", "list source files (.c, .cc) without coverage data " DEFAULT(DEFAULT_LIST_UNCOVERED),
 		"-h, --help", "print this help message"
 	);
 
 	return (err == 0x0) ? 0 : -1;
+}
+
+static int parse_thr(char const *arg, threshold_t *thr){
+	char const *c;
+
+
+	for(c=arg; *c!=0; c++){
+		if(*c == ','){
+			thr->red = atof(arg);
+			thr->yellow = atof(c + 1);
+
+			return 0;
+		}
+	}
+
+	return help("invalid threshold syntax");
 }
