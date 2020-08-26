@@ -12,21 +12,25 @@
 #include <string.h>
 #include <escape.h>
 #include <covdata.h>
+#include <file.h>
 #include <gcov/parser.tab.h>
 
 
 /* local/static prototypes */
+static int gcov_process(char const *file);
 static void stat_header(void);
 static void stat_line(file_data_t *covdata);
 static float per(cov_data_t *data);
+
+
+/* static variables */
+static file_data_t total;
 
 
 /* global functions */
 int main(int argc, char **argv){
 	int i;
 	int r;
-	file_data_t covdata,
-				total;
 
 
 	/* init */
@@ -36,21 +40,23 @@ int main(int argc, char **argv){
 	/* print header */
 	stat_header();
 
-	/* print file statistics */
-	for(i=1; i<argc; i++){
-		r = gcovparse(argv[i], &covdata);
+	/* process input */
+	r = 0;
 
-		if(r == 0){
-			stat_line(&covdata);
+	for(i=1; r==0 && i<argc; i++){
+		switch(file_type(argv[i])){
+		case F_DIR:
+			r = dir_process(argv[i], gcov_process);
+			break;
 
-			cov_data_add(&total.functions, &covdata.functions);
-			cov_data_add(&total.lines, &covdata.lines);
-			cov_data_add(&total.branches, &covdata.branches);
+		case F_GCOV:
+			r = gcov_process(argv[i]);
+			break;
 
-			free((void*)covdata.name);
+		default:
+			printf("unsupported file %s\n", argv[i]);
+			return -1;
 		}
-		else
-			printf("parser ret: %d\n", r);
 	}
 
 	/* print total */
@@ -62,6 +68,24 @@ int main(int argc, char **argv){
 
 
 /* local functions */
+static int gcov_process(char const *file){
+	file_data_t covdata;
+
+
+	if(gcovparse(file, &covdata) != 0)
+		return -1;
+
+	stat_line(&covdata);
+
+	cov_data_add(&total.functions, &covdata.functions);
+	cov_data_add(&total.lines, &covdata.lines);
+	cov_data_add(&total.branches, &covdata.branches);
+
+	free((void*)covdata.name);
+
+	return 0;
+}
+
 static void stat_header(void){
 	printf("%20.20s %25.25s %25.25s %25.25s\n", "file", "function", "line", "branch");
 }
