@@ -21,11 +21,13 @@ typedef enum{
 	F_UNKNOWN = 0,
 	F_DIR,
 	F_FILE,
+	F_CHAR,
 } file_type_t;
 
 
 /* prototypes */
 file_type_t file_type(char const *file);
+file_type_t file_typefd(int fd);
 char const *file_ext(char const *file);
 
 int dir_apply(char const *root, char const **exts, int (*op)(char const *file, va_list args), ...);

@@ -19,7 +19,7 @@
 /* local/static prototypes */
 static void cov_header(void);
 static void cov_separator(void);
-static void cov_line(file_cov_t *cov, char const *file_color);
+static void cov_line(file_cov_t *cov, char const *file_colour);
 static void cov_total(file_cov_t *cov, file_cov_t *total);
 
 static double cov_per(cov_data_t *data);
@@ -72,18 +72,18 @@ bool stats_check_thresholds(file_cov_t *cov){
 
 /* local functions */
 static void cov_header(void){
-	printf(BOLD "Coverage Info" RESET_ATTR "\n");
-	printf(UNDERLINE BOLD "%30.30s %25.25s %25.25s %25.25s" RESET_ATTR "\n", "file", "function", "cov_line", "branch");
+	printf("%sCoverage Info%s\n", BOLD, RESET_ATTR);
+	printf("%s%s%30.30s %25.25s %25.25s %25.25s%s\n", UNDERLINE, BOLD, "file", "function", "cov_line", "branch", RESET_ATTR);
 }
 
 static void cov_separator(void){
-	printf(UNDERLINE BOLD "%108.108s" RESET_ATTR "\n", "");
+	printf("%s%s%108.108s%s\n", UNDERLINE, BOLD, "", RESET_ATTR);
 }
 
-static void cov_line(file_cov_t *cov, char const *file_color){
+static void cov_line(file_cov_t *cov, char const *file_colour){
 	size_t i;
 	char line[26];
-	char const *color;
+	char const *colour;
 	double per;
 	cov_data_t *data[] = {
 		&cov->functions,
@@ -97,7 +97,7 @@ static void cov_line(file_cov_t *cov, char const *file_color){
 	};
 
 
-	printf(file_color);
+	printf(file_colour);
 	printf("%30.30s", cov->name);
 	printf(RESET_ATTR);
 
@@ -105,13 +105,13 @@ static void cov_line(file_cov_t *cov, char const *file_color){
 		if(data[i]->total != 0){
 			per = cov_per(data[i]);
 
-			if(per < thr[i].red)			color = FG_RED;
-			else if(per < thr[i].yellow)	color = FG_YELLOW;
-			else							color = FG_GREEN;
+			if(per < thr[i].red)			colour = FG_RED;
+			else if(per < thr[i].yellow)	colour = FG_YELLOW;
+			else							colour = FG_GREEN;
 
 			snprintf(line, sizeof(line) - 1, "%u/%u", data[i]->covered, data[i]->total);
 			printf(" %17.17s", line);
-			printf("%s%7.2f" RESET_ATTR "%%", color, per);
+			printf("%s%7.2f%s%%", colour, per, RESET_ATTR);
 		}
 		else
 			printf(" %25.25s", "none");
@@ -163,7 +163,7 @@ static int uncovered(char const *_file, va_list args){
 }
 
 static void uncovered_header(void){
-	printf("\n" BOLD "Uncovered Files" RESET_ATTR "\n");
+	printf("\n%sUncovered Files%s\n", BOLD, RESET_ATTR);
 }
 
 static void uncovered_line(char const *file){

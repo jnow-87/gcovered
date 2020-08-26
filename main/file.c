@@ -26,36 +26,33 @@ static char const *prefix_dir(char const *dir, char const *file);
 /* global functions */
 file_type_t file_type(char const *file){
 	int fd;
-	char const *s;
-	struct stat stat;
+	file_type_t type;
 
 
 	/* get file stat */
 	fd = open(file, O_RDONLY);
 
 	if(fd < 0)
-		goto err_0;
+		return F_ERROR;
+
+	type = file_typefd(fd);
+
+	(void)close(fd);
+
+	return type;
+}
+
+file_type_t file_typefd(int fd){
+	struct stat stat;
+
 
 	if(fstat(fd, &stat) != 0)
-		goto err_1;
+		return F_ERROR;
 
-	(void)close(fd);
-
-	/* check file type and extension */
-	if(stat.st_mode & (S_IFREG | S_IFLNK)){
-		return F_FILE;
-	}
-	else if(stat.st_mode & S_IFDIR)
-		return F_DIR;
-
-	return F_UNKNOWN;
-
-
-err_1:
-	(void)close(fd);
-
-err_0:
-	return F_ERROR;
+	if(stat.st_mode & S_IFCHR)						return F_CHAR;
+	else if(stat.st_mode & (S_IFREG | S_IFLNK))		return F_FILE;
+	else if(stat.st_mode & S_IFDIR)					return F_DIR;
+	else											return F_UNKNOWN;
 }
 
 char const *file_ext(char const *file){

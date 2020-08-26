@@ -110,11 +110,15 @@ static void cleanup(void){
 	fclose(fp);
 }
 
-static int gcoverror(char const *file, file_data_t *covdata, char const *s){
-	fprintf(stderr, FG_VIOLETT "%s" RESET_ATTR ":" FG_GREEN "%d:%d" RESET_ATTR " token \"%s\" -- %s\n",
+static int gcoverror(char const *file, file_cov_t *cov, char const *s){
+	fprintf(stderr, "%s%s%s:%s%d:%d%s token \"%s\" -- %s\n",
+		FG_VIOLETT,
 		file,
+		RESET_ATTR,
+		FG_GREEN,
 		gcovlloc.first_line,
 		gcovlloc.first_column,
+		RESET_ATTR,
 		gcovtext,
 		s
 	);

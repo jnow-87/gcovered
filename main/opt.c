@@ -14,6 +14,7 @@
 #include <getopt.h>
 #include <escape.h>
 #include <opt.h>
+#include <file.h>
 
 
 /* macros */
@@ -35,6 +36,7 @@ opt_t opts = {
 	.thr_branches = { .red = DEFAULT_THR_RED, .yellow = DEFAULT_THR_YELLOW },
 	.recursive = DEFAULT_RECURSIVE,
 	.list_uncovered = DEFAULT_LIST_UNCOVERED,
+	.colour = !DEFAULT_NOCOLOUR,
 };
 
 
@@ -48,19 +50,25 @@ int opt_parse(int argc, char **argv){
 		{ .name = "thr-branches",	.has_arg = required_argument,	.flag = 0,	.val = 'b' },
 		{ .name = "no-recursion",	.has_arg = no_argument,			.flag = 0,	.val = 'n' },
 		{ .name = "uncovered",		.has_arg = no_argument,			.flag = 0,	.val = 'u' },
+		{ .name = "no-colour",		.has_arg = no_argument,			.flag = 0,	.val = 'c' },
 		{ .name = "help",			.has_arg = no_argument,			.flag = 0,	.val = 'h' },
 		{ 0, 0, 0, 0}
 	};
 
 
+	/* set colour flag */
+	if(file_typefd(fileno(stdout)) != F_CHAR)
+		opts.colour = false;
+
 	/* parse arguments */
-	while((opt = getopt_long(argc, argv, ":f:l:b:nuh", long_opt, &long_optind)) != -1){
+	while((opt = getopt_long(argc, argv, ":f:l:b:nuch", long_opt, &long_optind)) != -1){
 		switch(opt){
 		case 'f':	if(parse_thr(optarg, &opts.thr_func) != 0) return -1; break;
 		case 'l':	if(parse_thr(optarg, &opts.thr_lines) != 0) return -1; break;
 		case 'b':	if(parse_thr(optarg, &opts.thr_branches) != 0) return -1; break;
 		case 'n':	opts.recursive = false; break;
 		case 'u':	opts.list_uncovered = true; break;
+		case 'c':	opts.colour = false; break;
 		case 'h':	(void)help(0x0); return argc;
 
 		case ':':	return help("missing argument to \"%s\"", argv[optind - 1]);
@@ -81,7 +89,7 @@ static int help(char const *err, ...){
 	if(err != 0x0 && *err != 0){
 		va_start(lst, err);
 
-		printf(FG_RED "error" RESET_ATTR ": ");
+		printf("%serror%s: ", FG_RED, RESET_ATTR);
 		vprintf(err, lst);
 		printf("\n\n");
 
@@ -109,6 +117,7 @@ static int help(char const *err, ...){
 		"-b, --branch-thr=<red,yellow>", "branch coverage thresholds [%] " DEFAULT_THR(),
 		"-n, --no-recursion", "do not recurse into sub-directories " DEFAULT(DEFAULT_RECURSIVE),
 		"-u, --uncovered", "list source files (.c, .cc) without coverage data " DEFAULT(DEFAULT_LIST_UNCOVERED),
+		"-c, --no-colour", "disable coloured output " DEFAULT(DEFAULT_NOCOLOUR),
 		"-h, --help", "print this help message"
 	);
 

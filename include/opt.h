@@ -19,6 +19,7 @@
 #define DEFAULT_THR_YELLOW		100.0
 #define DEFAULT_RECURSIVE		true
 #define DEFAULT_LIST_UNCOVERED	false
+#define DEFAULT_NOCOLOUR		false
 
 
 /* types */
@@ -33,7 +34,8 @@ typedef struct{
 				thr_branches;
 
 	bool recursive,
-		 list_uncovered;
+		 list_uncovered,
+		 colour;
 } opt_t;
 
 
