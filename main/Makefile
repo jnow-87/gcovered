@@ -10,6 +10,6 @@
 bin-y := gcovered
 
 
-gcovered-y := main.o covdata.o file.o statistics.o gcov/
+gcovered-y := main.o opt.o covdata.o file.o statistics.o gcov/
 
 $(loc_build_tree)/main.o: $(build_tree)/gcov/parser.tab.c

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <covdata.h>
 #include <statistics.h>
+#include <opt.h>
 #include <file.h>
 #include <gcov.h>
 
@@ -22,7 +23,14 @@ file_data_t total;
 int main(int argc, char **argv){
 	int i;
 	int r;
+	int optind;
 
+
+	/* command line processing */
+	optind = opt_parse(argc, argv);
+
+	if(optind < 0)				return -1;
+	else if(argc - optind == 0)	return 0;
 
 	/* init */
 	cov_file_init(&total);
@@ -32,9 +40,7 @@ int main(int argc, char **argv){
 	stat_header();
 
 	/* process input */
-	r = 0;
-
-	for(i=1; r==0 && i<argc; i++){
+	for(i=optind, r=0; r==0 && i<argc; i++){
 		switch(file_type(argv[i])){
 		case F_DIR:
 			r = dir_process(argv[i], gcov_process);
