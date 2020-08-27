@@ -90,15 +90,24 @@ int opt_parse(int argc, char **argv){
 		opts.colour = false;
 
 	/* parse arguments (checking for rc-file) */
+	r = 0;
+
 	while((opt = getopt_long(argc, argv, optstr, long_opt, &long_optind)) != -1){
 		if(opt == 'r'){
 			opts.rc_file = optarg;
+			r = 1;
 			break;
 		}
 	}
 
-	if(rcparse(opts.rc_file) != 0)
+	if(file_type(opts.rc_file) != F_ERROR){
+		if(rcparse(opts.rc_file) != 0)
+			return -1;
+	}
+	else if(r == 1){
+		fprintf(stderr, "invalid rc file \"%s\"\n", opts.rc_file);
 		return -1;
+	}
 
 	/* parse arguments */
 	optind = 1;

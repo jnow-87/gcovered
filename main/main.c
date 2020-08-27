@@ -22,8 +22,12 @@ int main(int argc, char **argv){
 	/* command line processing */
 	optind = opt_parse(argc, argv);
 
-	if(optind < 0)				return -1;
-	else if(argc - optind == 0)	return 0;
+	if(optind < 0){
+		opts_cleanup();
+		return -1;
+	}
+	else if(argc - optind == 0)
+		return 0;
 
 	/* parse gcov files */
 	cov = gcov_parse((char const**)(argv + optind), argc - optind);
