@@ -16,6 +16,7 @@
 
 
 /* macros */
+#define DEFAULT_RC_FILE			".gcoveredrc"
 #define DEFAULT_THR_RED			100.0
 #define DEFAULT_THR_YELLOW		100.0
 #define DEFAULT_SRC_DIR			"./"
@@ -33,6 +34,8 @@ typedef struct{
 } threshold_t;
 
 typedef struct{
+	char const *rc_file;
+
 	threshold_t thr_func,
 				thr_lines,
 				thr_branches;

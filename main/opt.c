@@ -7,6 +7,7 @@
 
 
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -19,6 +20,7 @@
 #include <util/vector.h>
 #include <util/string.h>
 #include <statistics.h>
+#include <rc/parser.tab.h>
 #include <escape.h>
 #include <opt.h>
 
@@ -41,6 +43,7 @@ static int src_dirs_verify(vector_t *dirs);
 
 /* global variables */
 opt_t opts = {
+	.rc_file = DEFAULT_RC_FILE,
 	.thr_func = { .red = DEFAULT_THR_RED, .yellow = DEFAULT_THR_YELLOW },
 	.thr_lines = { .red = DEFAULT_THR_RED, .yellow = DEFAULT_THR_YELLOW },
 	.thr_branches = { .red = DEFAULT_THR_RED, .yellow = DEFAULT_THR_YELLOW },
@@ -57,7 +60,9 @@ int opt_parse(int argc, char **argv){
 	int r;
 	int opt;
 	int long_optind;
+	char const optstr[] = ":r:f:l:b:d:nuch";
 	struct option const long_opt[] = {
+		{ .name = "rc",				.has_arg = required_argument,	.flag = 0,	.val = 'r' },
 		{ .name = "thr-func",		.has_arg = required_argument,	.flag = 0,	.val = 'f' },
 		{ .name = "thr-lines",		.has_arg = required_argument,	.flag = 0,	.val = 'l' },
 		{ .name = "thr-branches",	.has_arg = required_argument,	.flag = 0,	.val = 'b' },
@@ -84,9 +89,23 @@ int opt_parse(int argc, char **argv){
 	if(file_typefd(fileno(stdout)) != F_CHAR)
 		opts.colour = false;
 
+	/* parse arguments (checking for rc-file) */
+	while((opt = getopt_long(argc, argv, optstr, long_opt, &long_optind)) != -1){
+		if(opt == 'r'){
+			opts.rc_file = optarg;
+			break;
+		}
+	}
+
+	if(rcparse(opts.rc_file) != 0)
+		return -1;
+
 	/* parse arguments */
-	while((opt = getopt_long(argc, argv, ":f:l:b:s:nuch", long_opt, &long_optind)) != -1){
+	optind = 1;
+
+	while((opt = getopt_long(argc, argv, optstr, long_opt, &long_optind)) != -1){
 		switch(opt){
+		case 'r':	break;
 		case 'f':	if(parse_thr(optarg, &opts.thr_func) != 0) return -1; break;
 		case 'l':	if(parse_thr(optarg, &opts.thr_lines) != 0) return -1; break;
 		case 'b':	if(parse_thr(optarg, &opts.thr_branches) != 0) return -1; break;
@@ -156,6 +175,8 @@ static int help(char const *err, ...){
 		"\n"
 		"Options:\n"
 		"%35.35s    %s\n"
+		"\n"
+		"%35.35s    %s\n"
 		"%35.35s    %s\n"
 		"%35.35s    %s\n"
 		"\n"
@@ -167,6 +188,7 @@ static int help(char const *err, ...){
 		"\n"
 		"%35.35s    %s\n"
 		,
+		"-r, --rc=<rc-file>", "use <rc-file> as base configuration " DEFAULT(DEFAULT_RC_FILE),
 		"-f, --func-thr=<red,yellow>", "function coverage thresholds [%] " DEFAULT_THR(),
 		"-l, --line-thr=<red,yellow>", "line coverage thresholds [%] " DEFAULT_THR(),
 		"-b, --branch-thr=<red,yellow>", "branch coverage thresholds [%] " DEFAULT_THR(),
