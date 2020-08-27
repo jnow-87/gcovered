@@ -12,6 +12,7 @@
 
 
 #include <stdbool.h>
+#include <util/vector.h>
 
 
 /* macros */
@@ -36,8 +37,8 @@ typedef struct{
 				thr_lines,
 				thr_branches;
 
-	char const **src_dirs,
-			   **excl_dirs;
+	vector_t src_dirs,
+			 excl_dirs;
 
 	bool recursive,
 		 list_uncovered,

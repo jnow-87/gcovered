@@ -15,8 +15,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <util/file.h>
 #include <opt.h>
-#include <file.h>
 
 
 /* local/static prototypes */

@@ -16,6 +16,7 @@
 #include <covdata.h>
 #include <gcov/parser.tab.h>
 #include <gcov.h>
+#include <opt.h>
 
 
 /* local/static prototypes */
@@ -74,6 +75,7 @@ static int process(char const *file, ...){
 }
 
 static int vprocess(char const *file, va_list args){
+	char const *excl;
 	file_cov_t cov;
 	file_cov_t *p;
 	file_cov_t **files;
@@ -83,6 +85,14 @@ static int vprocess(char const *file, va_list args){
 
 	if(gcovparse(file, &cov) != 0)
 		return -1;
+
+	vector_for_each(&opts.excl_dirs, excl){
+		if(strncmp(cov.name, excl, strlen(excl)) == 0
+		|| strncmp(cov.name + 2, excl, strlen(excl)) == 0
+		){
+			return 0;
+		}
+	}
 
 	p = malloc(sizeof(file_cov_t));
 

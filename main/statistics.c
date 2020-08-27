@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <util/list.h>
 #include <util/file.h>
+#include <util/vector.h>
 #include <escape.h>
 #include <opt.h>
 #include <covdata.h>
@@ -46,13 +47,13 @@ void stats_print(file_cov_t *cov){
 }
 
 void stats_uncovered(file_cov_t *cov){
-	char const **e;
+	char const *e;
 
 
 	uncovered_header();
 
-	for(e=opts.src_dirs; *e!=0x0; e++)
-		(void)dir_apply(*e, (char const*[]){"c", "cc", 0x0}, uncovered, *e, cov);
+	vector_for_each(&opts.src_dirs, e)
+		(void)dir_apply(e, (char const*[]){"c", "cc", 0x0}, uncovered, e, cov);
 }
 
 int stats_thresholds_verify(void){
@@ -157,7 +158,7 @@ static double cov_per(cov_data_t *data){
 static int uncovered(char const *_file, va_list args){
 	char const *dir,
 			   *file;
-	char const **excl;
+	char const *excl;
 	file_cov_t *cov,
 				*c;
 
@@ -170,9 +171,9 @@ static int uncovered(char const *_file, va_list args){
 	if(*file == '/')
 		file++;
 
-	for(excl=opts.excl_dirs; *excl!=0x0; excl++){
-		if(strncmp(_file, *excl, strlen(*excl)) == 0
-		|| strncmp(_file + 2, *excl, strlen(*excl)) == 0
+	vector_for_each(&opts.excl_dirs, excl){
+		if(strncmp(_file, excl, strlen(excl)) == 0
+		|| strncmp(_file + 2, excl, strlen(excl)) == 0
 		){
 			return 0;
 		}
