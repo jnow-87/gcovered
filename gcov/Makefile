@@ -10,5 +10,6 @@
 obj-y := parser.tab.o lexer.lex.o process.o
 
 
+$(loc_build_tree)/process.o: $(loc_build_tree)/parser.tab.c
 $(loc_build_tree)/lexer.lex.o: $(loc_build_tree)/parser.tab.c
 $(loc_build_tree)/parser.tab.o: $(loc_build_tree)/lexer.lex.c

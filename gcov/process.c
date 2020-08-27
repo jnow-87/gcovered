@@ -10,8 +10,9 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <sys/types.h>
-#include <list.h>
-#include <file.h>
+#include <util/list.h>
+#include <util/file.h>
+#include <util/vector.h>
 #include <covdata.h>
 #include <gcov/parser.tab.h>
 #include <gcov.h>

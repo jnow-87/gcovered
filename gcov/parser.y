@@ -18,20 +18,20 @@
 	#include <errno.h>
 	#include <escape.h>
 	#include <covdata.h>
+	#include <util/string.h>
 
 
 	/* macros */
 	// extended error messages
 	#define YYERROR_VERBOSE
 
-	/* local/static variables */
+	/* static variables */
 	static FILE *fp = 0x0;
 
 
 	/* prototypes */
 	static void cleanup(void);
 	static int gcoverror(char const *file, file_cov_t *cov, char const *s);
-	static char *stralloc(char *s, size_t len);
 %}
 
 /* parse paramters */
@@ -47,7 +47,7 @@
 	fp = fopen(file, "r");
 
 	if(fp == 0){
-		fprintf(stderr, "error reading config file \"%s\" -- %s\n", file, strerror(errno));
+		fprintf(stderr, "error reading gcov file \"%s\" -- %s\n", file, strerror(errno));
 		return 1;
 	}
 
@@ -91,7 +91,7 @@
 
 /* start */
 start :	%empty					{ $$.line = 0; }
-	  | error					{ cleanup(); $$.line = 0; YYABORT; }
+	  | error					{ $$.line = 0; YYABORT; }
 	  | start line				{ $$ = $1; }
 	  ;
 
@@ -124,16 +124,4 @@ static int gcoverror(char const *file, file_cov_t *cov, char const *s){
 	);
 
 	return 0;
-}
-
-static char *stralloc(char *_s, size_t len){
-	char *s;
-
-
-	s = malloc(len + 1);
-
-	if(s != 0x0)
-		strcpy(s, _s);
-
-	return s;
 }

@@ -9,8 +9,8 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <list.h>
-#include <file.h>
+#include <util/list.h>
+#include <util/file.h>
 #include <escape.h>
 #include <opt.h>
 #include <covdata.h>
