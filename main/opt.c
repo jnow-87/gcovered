@@ -7,6 +7,7 @@
 
 
 
+#include <sys/types.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -14,14 +15,13 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/types.h>
 #include <getopt.h>
 #include <util/file.h>
 #include <util/vector.h>
 #include <util/string.h>
-#include <statistics.h>
+#include <util/escape.h>
 #include <rc/parser.tab.h>
-#include <escape.h>
+#include <cov/cov.h>
 #include <opt.h>
 
 
@@ -130,7 +130,7 @@ int opt_parse(int argc, char **argv){
 	if(src_dirs_verify(&opts.src_dirs) != 0 || src_dirs_verify(&opts.excl_dirs) != 0)
 		return help("invalid src-directory configuartion");
 
-	if(stats_thresholds_verify() != 0)
+	if(cov_thresholds_verify() != 0)
 		return help("invalid coverage threshold configuration, valid range [0, 100]");
 
 	return optind;

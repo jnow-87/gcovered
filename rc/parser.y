@@ -12,14 +12,14 @@
 
 /* header */
 %{
-	#include <stdbool.h>
 	#include <sys/types.h>
+	#include <stdbool.h>
 	#include <string.h>
 	#include <errno.h>
-	#include <rc/lexer.lex.h>
 	#include <util/vector.h>
 	#include <util/string.h>
-	#include <escape.h>
+	#include <util/escape.h>
+	#include <rc/lexer.lex.h>
 	#include <opt.h>
 
 

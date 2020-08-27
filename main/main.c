@@ -7,10 +7,9 @@
 
 
 
+#include <cov/cov.h>
+#include <cov/gcov.h>
 #include <opt.h>
-#include <covdata.h>
-#include <gcov.h>
-#include <statistics.h>
 
 
 /* global functions */
@@ -32,14 +31,14 @@ int main(int argc, char **argv){
 	if(cov == 0x0)
 		return -1;
 
-	r = stats_thresholds_apply(cov);
+	r = cov_thresholds_apply(cov);
 
 	/* print coverage statistics */
-	stats_print(cov);
+	cov_stats_print(cov);
 
 	/* check for uncovered files */
 	if(opts.list_uncovered)
-		stats_uncovered(cov);
+		cov_uncovered(cov);
 
 	/* cleanup */
 	gcov_cleanup(cov);

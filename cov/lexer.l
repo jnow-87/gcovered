@@ -11,8 +11,8 @@
 %option noyywrap
 
 %{
-	#include <covdata.h>
-	#include <gcov/parser.tab.h>
+	#include <cov/cov.h>
+	#include <cov/parser.tab.h>
 
 
 	/* define YY_USER_ACTION, executed for every token, before executing its

@@ -7,15 +7,15 @@
 
 
 
+#include <sys/types.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <sys/types.h>
 #include <util/list.h>
 #include <util/file.h>
 #include <util/vector.h>
-#include <covdata.h>
-#include <gcov/parser.tab.h>
-#include <gcov.h>
+#include <cov/cov.h>
+#include <cov/gcov.h>
+#include <cov/parser.tab.h>
 #include <opt.h>
 
 

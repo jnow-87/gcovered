@@ -12,7 +12,7 @@
 
 
 #include <sys/types.h>
-#include <covdata.h>
+#include <cov/cov.h>
 
 
 /* prototypes */

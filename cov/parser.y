@@ -13,12 +13,12 @@
 /* header */
 %{
 	#include <sys/types.h>
-	#include <gcov/lexer.lex.h>
 	#include <string.h>
 	#include <errno.h>
-	#include <escape.h>
-	#include <covdata.h>
+	#include <util/escape.h>
 	#include <util/string.h>
+	#include <cov/cov.h>
+	#include <cov/lexer.lex.h>
 
 
 	/* macros */
