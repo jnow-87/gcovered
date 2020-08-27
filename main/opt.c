@@ -242,7 +242,7 @@ static int parse_src_dirs(char *cfg){
 
 	/* set the default src_dir if needed */
 	if(opts.src_dirs.size == 0)
-		return vector_add(&opts.src_dirs, DEFAULT_SRC_DIR);
+		return vector_add(&opts.src_dirs, stralloc(DEFAULT_SRC_DIR, strlen(DEFAULT_SRC_DIR)));
 
 	return 0;
 }
