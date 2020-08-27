@@ -7,6 +7,7 @@
 
 
 
+#include <version.h>
 #include <sys/types.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -34,6 +35,7 @@
 
 /* local/static prototypes */
 static int help(char const *err, ...);
+static void version(void);
 
 static int parse_thr(char const *arg, threshold_t *thr);
 static int parse_src_dirs(char *cfg);
@@ -60,7 +62,7 @@ int opt_parse(int argc, char **argv){
 	int r;
 	int opt;
 	int long_optind;
-	char const optstr[] = ":r:f:l:b:d:nuch";
+	char const optstr[] = ":r:f:l:b:d:nucvh";
 	struct option const long_opt[] = {
 		{ .name = "rc",				.has_arg = required_argument,	.flag = 0,	.val = 'r' },
 		{ .name = "thr-func",		.has_arg = required_argument,	.flag = 0,	.val = 'f' },
@@ -70,6 +72,7 @@ int opt_parse(int argc, char **argv){
 		{ .name = "no-recursion",	.has_arg = no_argument,			.flag = 0,	.val = 'n' },
 		{ .name = "uncovered",		.has_arg = no_argument,			.flag = 0,	.val = 'u' },
 		{ .name = "no-colour",		.has_arg = no_argument,			.flag = 0,	.val = 'c' },
+		{ .name = "version",		.has_arg = no_argument,			.flag = 0,	.val = 'v' },
 		{ .name = "help",			.has_arg = no_argument,			.flag = 0,	.val = 'h' },
 		{ 0, 0, 0, 0}
 	};
@@ -122,6 +125,7 @@ int opt_parse(int argc, char **argv){
 		case 'n':	opts.recursive = false; break;
 		case 'u':	opts.list_uncovered = true; break;
 		case 'c':	opts.colour = false; break;
+		case 'v':	version(); return argc;
 		case 'h':	(void)help(0x0); return argc;
 
 		case ':':	return help("missing argument to \"%s\"", argv[optind - 1]);
@@ -177,7 +181,7 @@ static int help(char const *err, ...){
 	}
 
 	printf(
-		"usage: gcovered [options] {<gcov-file | directory>}\n"
+		"usage: %s [options] {<gcov-file | directory>}\n"
 		"\n"
 		"    Print function, line and branch coverage information for the given gcov-files\n"
 		"    and all gcov-files contained in the given directories.\n"
@@ -197,7 +201,9 @@ static int help(char const *err, ...){
 		"    %-30.30s    %s\n"
 		"\n"
 		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
 		,
+		PROGNAME,
 		"-r, --rc=<rc-file>", "use <rc-file> as base configuration " DEFAULT(DEFAULT_RC_FILE),
 		"-f, --func-thr=<red,yellow>", "function coverage thresholds [%] " DEFAULT_THR(),
 		"-l, --line-thr=<red,yellow>", "line coverage thresholds [%] " DEFAULT_THR(),
@@ -208,10 +214,15 @@ static int help(char const *err, ...){
 		"", DEFAULT(DEFAULT_SRC_DIR),
 		"-n, --no-recursion", "do not recurse into sub-directories " DEFAULT(DEFAULT_RECURSIVE),
 		"-c, --no-colour", "disable coloured output " DEFAULT(DEFAULT_NOCOLOUR),
+		"-v, --version", "print version information",
 		"-h, --help", "print this help message"
 	);
 
 	return (err == 0x0) ? 0 : -1;
+}
+
+static void version(void){
+	printf(PROGNAME" version info:\n%s\n", VERSION);
 }
 
 static int parse_thr(char const *arg, threshold_t *thr){

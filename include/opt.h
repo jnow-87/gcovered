@@ -26,6 +26,8 @@
 
 #define SRC_DIR_SEPARATOR		':'
 
+#define PROGNAME				"gcovered"
+
 
 /* types */
 typedef struct{
