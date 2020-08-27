@@ -9,6 +9,8 @@
 
 %option prefix="gcov"
 %option noyywrap
+%option nounput
+%option noinput
 
 %{
 	#include <cov/cov.h>

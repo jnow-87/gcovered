@@ -111,6 +111,8 @@ static void cleanup(void){
 }
 
 static int gcoverror(char const *file, file_cov_t *cov, char const *s){
+	(void)cov;
+
 	fprintf(stderr, "%s%s%s:%s%d:%d%s token \"%s\" -- %s\n",
 		FG_VIOLETT,
 		file,

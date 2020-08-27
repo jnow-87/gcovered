@@ -27,7 +27,12 @@ src_dirs := main/
 include $(scripts_dir)/main.make
 
 # init default flags
-cflags := $(CFLAGS)
+cflags := $(CFLAGS) \
+	-Wall \
+	-Wextra \
+	-Wshadow \
+	-flto
+
 cppflags := $(CPPFLAGS) \
 	-Iinclude \
 	-I$(build_tree)

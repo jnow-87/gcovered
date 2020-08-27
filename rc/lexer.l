@@ -9,6 +9,8 @@
 
 %option prefix="rc"
 %option noyywrap
+%option nounput
+%option noinput
 
 %{
 	#include <stdbool.h>
