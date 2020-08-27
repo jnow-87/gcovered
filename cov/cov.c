@@ -103,11 +103,11 @@ int cov_thresholds_apply(file_cov_t *cov){
 /* local functions */
 static void cov_header(void){
 	printf("%sCoverage Info%s\n", BOLD, RESET_ATTR);
-	printf("%s%s%30.30s %25.25s %25.25s %25.25s%s\n", UNDERLINE, BOLD, "file", "function", "cov_line", "branch", RESET_ATTR);
+	printf("  %s%s%30.30s %25.25s %25.25s %25.25s%s\n", UNDERLINE, BOLD, "file             ", "function     ", "line     ", "branch      ", RESET_ATTR);
 }
 
 static void cov_separator(void){
-	printf("%s%s%108.108s%s\n", UNDERLINE, BOLD, "", RESET_ATTR);
+	printf("  %s%s%108.108s%s\n", UNDERLINE, BOLD, "", RESET_ATTR);
 }
 
 static void cov_line(file_cov_t *cov, char const *file_colour){
@@ -127,7 +127,7 @@ static void cov_line(file_cov_t *cov, char const *file_colour){
 	};
 
 
-	printf(file_colour);
+	printf("  %s", file_colour);
 	printf("%30.30s", cov->name);
 	printf(RESET_ATTR);
 

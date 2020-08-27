@@ -105,7 +105,7 @@ int opt_parse(int argc, char **argv){
 			return -1;
 	}
 	else if(r == 1){
-		fprintf(stderr, "invalid rc file \"%s\"\n", opts.rc_file);
+		fprintf(stderr, "invalid rc-file \"%s\"\n", opts.rc_file);
 		return -1;
 	}
 
@@ -183,27 +183,29 @@ static int help(char const *err, ...){
 		"    and all gcov-files contained in the given directories.\n"
 		"\n"
 		"Options:\n"
-		"%35.35s    %s\n"
+		"    %-30.30s    %s\n"
 		"\n"
-		"%35.35s    %s\n"
-		"%35.35s    %s\n"
-		"%35.35s    %s\n"
+		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
 		"\n"
-		"%35.35s    %s\n"
-		"%35.35s    %s\n"
-		"%35.35s    %s\n"
-		"%35.35s    %s\n"
-		"%35.35s    %s\n"
+		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
+		"    %-30.30s    %s\n"
 		"\n"
-		"%35.35s    %s\n"
+		"    %-30.30s    %s\n"
 		,
 		"-r, --rc=<rc-file>", "use <rc-file> as base configuration " DEFAULT(DEFAULT_RC_FILE),
 		"-f, --func-thr=<red,yellow>", "function coverage thresholds [%] " DEFAULT_THR(),
 		"-l, --line-thr=<red,yellow>", "line coverage thresholds [%] " DEFAULT_THR(),
 		"-b, --branch-thr=<red,yellow>", "branch coverage thresholds [%] " DEFAULT_THR(),
 		"-u, --uncovered", "list source files (.c, .cc) without coverage data " DEFAULT(DEFAULT_LIST_UNCOVERED),
-		"-d, --dirs={[+]src|-excl:}", "list of directories to use or ignore when searching for source",
-		"", "and gcov files " DEFAULT(DEFAULT_SRC_DIR),
+		"-d, --dirs={[+]src|-excl:}", "list of directories to use or ignore when search for source-files",
+		"", "and filtering the output (not used to search for gcov-files)",
+		"", DEFAULT(DEFAULT_SRC_DIR),
 		"-n, --no-recursion", "do not recurse into sub-directories " DEFAULT(DEFAULT_RECURSIVE),
 		"-c, --no-colour", "disable coloured output " DEFAULT(DEFAULT_NOCOLOUR),
 		"-h, --help", "print this help message"

@@ -53,7 +53,7 @@
 	fp = fopen(file, "r");
 
 	if(fp == 0){
-		fprintf(stderr, "error reading rc file \"%s\" -- %s\n", file, strerror(errno));
+		fprintf(stderr, "error reading rc-file \"%s\" -- %s\n", file, strerror(errno));
 		return 1;
 	}
 
