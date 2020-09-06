@@ -76,11 +76,11 @@ install_dir_system := /usr/bin
 
 .PHONY: install-user
 install-user: all
-	$(cp) $(bin) $(install_dir_user)
+	$(call cmd_run_script,$(cp) $(bin) $(install_dir_user))
 
 .PHONY: install-system
 install-system: all
-	$(cp) $(bin) $(install_dir_system)
+	$(call cmd_run_script,$(cp) $(bin) $(install_dir_system))
 
 .PHONY: uninstall
 uninstall:
