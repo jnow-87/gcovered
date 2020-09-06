@@ -92,6 +92,7 @@
 %token KEY_LINE
 %token KEY_BRANCH
 %token KEY_UNCOVERED
+%token KEY_EXCLUDED
 %token KEY_COLOUR
 %token KEY_RECURSIVE
 
@@ -137,6 +138,7 @@ sec-excl :	%empty									{ }
 
 sec-gen :	%empty									{ }
 		|	sec-gen KEY_UNCOVERED '=' BOOL			{ opts.list_uncovered = $4; }
+		|	sec-gen KEY_EXCLUDED '=' BOOL			{ opts.list_excluded = $4; }
 		|	sec-gen KEY_COLOUR '=' BOOL				{ opts.colour = $4; }
 		|	sec-gen KEY_RECURSIVE '=' BOOL			{ opts.recursive = $4; }
 		;

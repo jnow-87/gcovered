@@ -52,6 +52,7 @@ opt_t opts = {
 	.excludes = VECTOR_INIT(),
 	.recursive = DEFAULT_RECURSIVE,
 	.list_uncovered = DEFAULT_LIST_UNCOVERED,
+	.list_excluded = DEFAULT_LIST_EXCLUDED,
 	.colour = !DEFAULT_NOCOLOUR,
 };
 
@@ -61,7 +62,7 @@ int opt_parse(int argc, char **argv){
 	int r;
 	int opt;
 	int long_optind;
-	char const optstr[] = ":r:f:l:b:s:e:nucvh";
+	char const optstr[] = ":r:f:l:b:s:e:nuxcvh";
 	struct option const long_opt[] = {
 		{ .name = "rc",				.has_arg = required_argument,	.flag = 0,	.val = 'r' },
 		{ .name = "thr-func",		.has_arg = required_argument,	.flag = 0,	.val = 'f' },
@@ -71,6 +72,7 @@ int opt_parse(int argc, char **argv){
 		{ .name = "exclude",		.has_arg = required_argument,	.flag = 0,	.val = 'e' },
 		{ .name = "no-recursion",	.has_arg = no_argument,			.flag = 0,	.val = 'n' },
 		{ .name = "uncovered",		.has_arg = no_argument,			.flag = 0,	.val = 'u' },
+		{ .name = "excluded",		.has_arg = no_argument,			.flag = 0,	.val = 'x' },
 		{ .name = "no-colour",		.has_arg = no_argument,			.flag = 0,	.val = 'c' },
 		{ .name = "version",		.has_arg = no_argument,			.flag = 0,	.val = 'v' },
 		{ .name = "help",			.has_arg = no_argument,			.flag = 0,	.val = 'h' },
@@ -125,6 +127,7 @@ int opt_parse(int argc, char **argv){
 		case 'e':	if(parse_dirs(optarg, &opts.excludes) != 0) return -1; break;
 		case 'n':	opts.recursive = false; break;
 		case 'u':	opts.list_uncovered = true; break;
+		case 'x':	opts.list_excluded = true; break;
 		case 'c':	opts.colour = false; break;
 		case 'v':	version(); return argc;
 		case 'h':	(void)help(0x0); return argc;
@@ -200,6 +203,7 @@ static int help(char const *err, ...){
 		"    %-35.35s    %s\n"
 		"    %-35.35s    %s\n"
 		"    %-35.35s    %s\n"
+		"    %-35.35s    %s\n"
 		"\n"
 		"    %-35.35s    %s\n"
 		"    %-35.35s    %s\n"
@@ -213,6 +217,7 @@ static int help(char const *err, ...){
 		"-s, --source={<dir>:}", "list of directories to search for uncovered files " DEFAULT(DEFAULT_SRC_DIR),
 		"-e, --exclude={[<dir>|<file>]:}", "list of files and directories to exclude from coverage analysis",
 		"", "and to ignore when checking for uncovered files",
+		"-x, --excluded", "list files and directories that are currently excluded",
 		"-n, --no-recursion", "do not recurse into sub-directories " DEFAULT(DEFAULT_RECURSIVE),
 		"-c, --no-colour", "disable coloured output " DEFAULT(DEFAULT_NOCOLOUR),
 		"-v, --version", "print version information",

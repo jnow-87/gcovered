@@ -44,6 +44,10 @@ int main(int argc, char **argv){
 	if(opts.list_uncovered)
 		cov_uncovered(cov);
 
+	/* list excluded */
+	if(opts.list_excluded)
+		cov_excluded();
+
 	/* cleanup */
 	gcov_cleanup(cov);
 	opts_cleanup();

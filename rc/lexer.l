@@ -54,6 +54,7 @@
 "line"							{ return KEY_LINE; }
 "branch"						{ return KEY_BRANCH; }
 "uncovered"						{ return KEY_UNCOVERED; }
+"excluded"						{ return KEY_EXCLUDED; }
 "colour"						{ return KEY_COLOUR; }
 "recursive"						{ return KEY_RECURSIVE; }
 
