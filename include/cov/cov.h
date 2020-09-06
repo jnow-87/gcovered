@@ -36,6 +36,7 @@ void cov_add(cov_data_t *lhs, cov_data_t *rhs);
 
 void cov_stats_print(file_cov_t *cov);
 void cov_uncovered(file_cov_t *cov);
+void cov_excluded(void);
 
 int cov_thresholds_verify(void);
 int cov_thresholds_apply(file_cov_t *cov);

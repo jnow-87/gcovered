@@ -22,6 +22,7 @@
 #define DEFAULT_SRC_DIR			"./"
 #define DEFAULT_RECURSIVE		true
 #define DEFAULT_LIST_UNCOVERED	false
+#define DEFAULT_LIST_EXCLUDED	false
 #define DEFAULT_NOCOLOUR		false
 
 #define SRC_DIR_SEPARATOR		':'
@@ -43,10 +44,11 @@ typedef struct{
 				thr_branches;
 
 	vector_t src_dirs,
-			 excl_dirs;
+			 excludes;
 
 	bool recursive,
 		 list_uncovered,
+		 list_excluded,
 		 colour;
 } opt_t;
 

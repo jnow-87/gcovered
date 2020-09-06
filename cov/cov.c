@@ -28,6 +28,9 @@ static int uncovered(char const *file, va_list args);
 static void uncovered_header(void);
 static void uncovered_line(char const *file);
 
+static void excluded_header(void);
+static void excluded_line(char const *file);
+
 
 /* global functions */
 void cov_init(file_cov_t *data){
@@ -69,6 +72,16 @@ void cov_uncovered(file_cov_t *cov){
 
 	vector_for_each(&opts.src_dirs, e)
 		(void)dir_apply(e, (char const*[]){"c", "cc", 0x0}, uncovered, e, cov);
+}
+
+void cov_excluded(void){
+	char const *e;
+
+
+	excluded_header();
+
+	vector_for_each(&opts.excludes, e)
+		excluded_line(e);
 }
 
 int cov_thresholds_verify(void){
@@ -186,7 +199,7 @@ static int uncovered(char const *_file, va_list args){
 	if(*file == '/')
 		file++;
 
-	vector_for_each(&opts.excl_dirs, excl){
+	vector_for_each(&opts.excludes, excl){
 		if(strncmp(_file, excl, strlen(excl)) == 0
 		|| strncmp(_file + 2, excl, strlen(excl)) == 0
 		){
@@ -209,5 +222,13 @@ static void uncovered_header(void){
 }
 
 static void uncovered_line(char const *file){
+	printf("    %s\n", file);
+}
+
+static void excluded_header(void){
+	printf("\n%sExcluded Files/Directories%s\n", BOLD, RESET_ATTR);
+}
+
+static void excluded_line(char const *file){
 	printf("    %s\n", file);
 }

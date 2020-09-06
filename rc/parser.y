@@ -92,6 +92,7 @@
 %token KEY_LINE
 %token KEY_BRANCH
 %token KEY_UNCOVERED
+%token KEY_EXCLUDED
 %token KEY_COLOUR
 %token KEY_RECURSIVE
 
@@ -132,11 +133,12 @@ sec-src :	%empty									{ }
 		;
 
 sec-excl :	%empty									{ }
-		 |	sec-excl STRING							{ ABORT_ON_ERROR(vector_add(&opts.excl_dirs, stralloc($2.s, $2.len))); }
+		 |	sec-excl STRING							{ ABORT_ON_ERROR(vector_add(&opts.excludes, stralloc($2.s, $2.len))); }
 		 ;
 
 sec-gen :	%empty									{ }
 		|	sec-gen KEY_UNCOVERED '=' BOOL			{ opts.list_uncovered = $4; }
+		|	sec-gen KEY_EXCLUDED '=' BOOL			{ opts.list_excluded = $4; }
 		|	sec-gen KEY_COLOUR '=' BOOL				{ opts.colour = $4; }
 		|	sec-gen KEY_RECURSIVE '=' BOOL			{ opts.recursive = $4; }
 		;

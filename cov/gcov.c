@@ -86,7 +86,7 @@ static int vprocess(char const *file, va_list args){
 	if(gcovparse(file, &cov) != 0)
 		return -1;
 
-	vector_for_each(&opts.excl_dirs, excl){
+	vector_for_each(&opts.excludes, excl){
 		if(strncmp(cov.name, excl, strlen(excl)) == 0
 		|| strncmp(cov.name + 2, excl, strlen(excl)) == 0
 		){

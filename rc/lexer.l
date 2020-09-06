@@ -30,6 +30,9 @@
 	}
 %}
 
+/* start states */
+%x MULTI_LINE_COMMENT
+
 
 %%
 
@@ -42,8 +45,8 @@
 
 	/* sections */
 "thresholds"					{ return SEC_THR; }
-"source-dirs"					{ return SEC_SRC; }
-"exclude-dirs"					{ return SEC_EXCL; }
+"sources"						{ return SEC_SRC; }
+"excludes"						{ return SEC_EXCL; }
 "general"						{ return SEC_GEN; }
 
 	/* keys */
@@ -51,6 +54,7 @@
 "line"							{ return KEY_LINE; }
 "branch"						{ return KEY_BRANCH; }
 "uncovered"						{ return KEY_UNCOVERED; }
+"excluded"						{ return KEY_EXCLUDED; }
 "colour"						{ return KEY_COLOUR; }
 "recursive"						{ return KEY_RECURSIVE; }
 
@@ -61,6 +65,17 @@
 \".+\"							{ rclval.str.s = rctext + 1; rclval.str.len = rcleng - 2; return STRING; }
 [0-9]+							{ rclval.i = atoi(rctext); return INT; }
 [0-9\.]+						{ rclval.f = atof(rctext); return FLOAT; }
+
+	/* comments */
+\/\/.*\r?\n						{ rc_col = 1; ++rc_line; }
+\/\*							{ BEGIN MULTI_LINE_COMMENT; }
+<MULTI_LINE_COMMENT>\*\/		{ BEGIN INITIAL; }
+<MULTI_LINE_COMMENT>.			{ }
+<MULTI_LINE_COMMENT>\r?\n		{ rc_col = 1; ++rc_line; }
+
+	/* spaces and line ending */
 [ \t]							{ }
 \r?\n							{ rc_col = 1; ++rc_line; }
+
+	/* default */
 .								{ return rctext[0]; }
