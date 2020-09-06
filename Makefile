@@ -56,6 +56,7 @@ ifneq ("$(DEBUG)","")
 all: cflags += -g
 all: cxxflags += -g
 all: asflags += -g
+all: ldlibs += -g
 endif
 
 all: $(lib) $(bin)
