@@ -103,11 +103,16 @@ int cov_thresholds_verify(void){
 }
 
 int cov_thresholds_apply(file_cov_t *cov){
-	if(cov_per(&cov->functions) < opts.thr_func.red
-	|| cov_per(&cov->lines) < opts.thr_lines.red
-	|| cov_per(&cov->branches) < opts.thr_branches.red
-	)
-		return -1;
+	file_cov_t *c;
+
+
+	list_for_each(cov, c){
+		if(cov_per(&c->functions) < opts.thr_func.red
+		|| cov_per(&c->lines) < opts.thr_lines.red
+		|| cov_per(&c->branches) < opts.thr_branches.red
+		)
+			return -1;
+	}
 
 	return 0;
 }
@@ -179,7 +184,7 @@ static void cov_total(file_cov_t *cov, file_cov_t *total){
 
 static double cov_per(cov_data_t *data){
 	if(data->total == 0.0)
-		return 0.0;
+		return 100.0;
 	return ((float)data->covered * 100) / data->total;
 }
 
