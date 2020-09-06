@@ -84,5 +84,5 @@ install-system: all
 
 .PHONY: uninstall
 uninstall:
-	$(rm) $(addprefix $(install_dir_user)/,$(bin))
-	$(rm) $(addprefix $(install_dir_system)/,$(bin))
+	$(rm) $(addprefix $(install_dir_user)/,$(notdir $(bin)))
+	$(rm) $(addprefix $(install_dir_system)/,$(notdir $(bin)))
