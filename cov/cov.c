@@ -186,7 +186,7 @@ static int uncovered(char const *_file, va_list args){
 	if(*file == '/')
 		file++;
 
-	vector_for_each(&opts.excl_dirs, excl){
+	vector_for_each(&opts.excludes, excl){
 		if(strncmp(_file, excl, strlen(excl)) == 0
 		|| strncmp(_file + 2, excl, strlen(excl)) == 0
 		){

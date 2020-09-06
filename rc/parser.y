@@ -132,7 +132,7 @@ sec-src :	%empty									{ }
 		;
 
 sec-excl :	%empty									{ }
-		 |	sec-excl STRING							{ ABORT_ON_ERROR(vector_add(&opts.excl_dirs, stralloc($2.s, $2.len))); }
+		 |	sec-excl STRING							{ ABORT_ON_ERROR(vector_add(&opts.excludes, stralloc($2.s, $2.len))); }
 		 ;
 
 sec-gen :	%empty									{ }

@@ -43,7 +43,7 @@ typedef struct{
 				thr_branches;
 
 	vector_t src_dirs,
-			 excl_dirs;
+			 excludes;
 
 	bool recursive,
 		 list_uncovered,

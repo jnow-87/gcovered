@@ -45,8 +45,8 @@
 
 	/* sections */
 "thresholds"					{ return SEC_THR; }
-"source-dirs"					{ return SEC_SRC; }
-"exclude-dirs"					{ return SEC_EXCL; }
+"sources"						{ return SEC_SRC; }
+"excludes"						{ return SEC_EXCL; }
 "general"						{ return SEC_GEN; }
 
 	/* keys */
