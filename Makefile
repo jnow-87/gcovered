@@ -46,6 +46,7 @@ yaccflags := $(YACCFLAGS)
 lexflags := $(LEXFLAGS)
 gperfflags := $(GPERFFLAGS)
 
+
 ####
 ## targets
 ####
@@ -71,18 +72,12 @@ distclean:
 	$(rm) $(build_tree)
 
 ## install
-install_dir_user := ~/bin
-install_dir_system := /usr/bin
+include $(scripts_dir)/install.make
 
-.PHONY: install-user
-install-user: all
-	$(call cmd_run_script,$(cp) $(bin) $(install_dir_user))
-
-.PHONY: install-system
-install-system: all
-	$(call cmd_run_script,$(cp) $(bin) $(install_dir_system))
+.PHONY: install
+install: all
+	$(call install,$(bin))
 
 .PHONY: uninstall
 uninstall:
-	$(rm) $(addprefix $(install_dir_user)/,$(notdir $(bin)))
-	$(rm) $(addprefix $(install_dir_system)/,$(notdir $(bin)))
+	$(call uninstall,$(addprefix $(PREFIX)/,$(notdir $(bin))))
