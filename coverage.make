@@ -8,7 +8,6 @@
 
 
 all_user_tools += gcovered
-cov_deps := check_user_tools check_build_tools
 
 gcovered_args := 
 
@@ -16,14 +15,10 @@ ifneq ("$(gcovered_rc)","")
   gcovered_args += -r $(gcovered_rc)
 endif
 
-coverage: $(cov_deps)
+
+.PHONY: coverage
+coverage: test
 	$(call cmd_run_script, \
-		rm -f $$(find $(build_tree) -name '*.gcda'); \
-		\
-		for bin in $(filter-out $(cov_deps), $^); do \
-			$${bin} || { echo "error executing $${bin}"; exit 1; }; \
-		done; \
-		\
 		gcda_files=$$(find $(build_tree) -name '*.gcda'); \
 		\
 		for file in $${gcda_files}; do \
@@ -32,5 +27,12 @@ coverage: $(cov_deps)
 			mv *.gcov $${tgt_name}; \
 		done; \
 		\
+		[ "$${gcda_files}" != "" ] || { echo $(call fg,red,"error")": no coverage data found"; exit 1; }; \
 		gcovered $(gcovered_args) $(build_tree); \
 	)
+
+.PHONY: coverage-clean
+coverage-clean:
+	$(call cmd_run_script, rm -f $$(find $(build_tree) -name '*.gcda'))
+
+test: coverage-clean
