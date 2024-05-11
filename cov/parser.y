@@ -8,6 +8,8 @@
 
 
 %define api.prefix {gcov}
+%define parse.error verbose
+%define parse.lac full
 %locations
 
 /* header */
@@ -20,10 +22,6 @@
 	#include <cov/cov.h>
 	#include <cov/lexer.lex.h>
 
-
-	/* macros */
-	// extended error messages
-	#define YYERROR_VERBOSE
 
 	/* static variables */
 	static FILE *fp = 0x0;

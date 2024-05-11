@@ -8,6 +8,8 @@
 
 
 %define api.prefix {rc}
+%define parse.error verbose
+%define parse.lac full
 %locations
 
 /* header */
@@ -24,9 +26,6 @@
 
 
 	/* macros */
-	// extended error messages
-	#define YYERROR_VERBOSE
-
 	// error wrapper
 	#define ABORT_ON_ERROR(expr){ \
 		if((expr) != 0){ \
